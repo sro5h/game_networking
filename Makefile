@@ -3,22 +3,21 @@ RM=rm
 CFLAGS=-I.
 LDFLAGS=-lsfml-system -lsfml-window -lsfml-graphics -lsfml-network
 
-PROJECT = app
+SERVER = server
+SERVER_HEADERS = NetworkProtocol.hpp GameServer.hpp
+SERVER_SOURCES = server.cpp GameServer.cpp
+SERVER_OBJECTS = $(subst .cpp,.o,$(SERVER_SOURCES))
 
-HEADERS = NetworkProtocol.hpp GameServer.hpp
-SOURCES = main.cpp GameServer.cpp
-OBJECTS = $(subst .cpp,.o,$(SOURCES))
+all: $(SERVER)
 
-all: $(PROJECT)
+$(SERVER): $(SERVER_OBJECTS)
+	$(CC) -o $(SERVER) $(SERVER_OBJECTS) $(CFLAGS) $(LDFLAGS)
 
-$(PROJECT): $(OBJECTS)
-	$(CC) -o $(PROJECT) $(OBJECTS) $(CFLAGS) $(LDFLAGS)
-
-$(OBJECTS): $(SOURCES) $(HEADERS)
-	$(CC) -c $(SOURCES) $(CFLAGS) $(LDFLAGS)
+$(SERVER_OBJECTS): $(SERVER_SOURCES) $(SERVER_HEADERS)
+	$(CC) -c $(SERVER_SOURCES) $(CFLAGS) $(LDFLAGS)
 
 clean:
-	$(RM) $(OBJECTS)
-	$(RM) $(PROJECT)
+	$(RM) $(SERVER_OBJECTS)
+	$(RM) $(SERVER)
 
 .PHONY: clean all
