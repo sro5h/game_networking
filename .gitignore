@@ -1,5 +1,6 @@
 # Binary file
-app
+server
+client
 
 # Object files
 *.o

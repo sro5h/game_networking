@@ -21,6 +21,7 @@ GameServer::GameServer()
         , mConnectionCount(0)
 {
         mListenerSocket.setBlocking(false);
+        setListening(true);
 }
 
 void GameServer::run()
@@ -81,6 +82,8 @@ void GameServer::handleDisconnections()
         {
                 if (!(*itr)->connected)
                 {
+                        std::cout << "Connection lost" << std::endl;
+
                         itr = mPeers.erase(itr);
                         --mConnectionCount;
 
