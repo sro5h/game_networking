@@ -17,7 +17,7 @@ GameServer::GameServer()
         , mPort(Server::Port)
         , mTickCounter(0)
         , mIsRunning(true)
-        , mMaxConnections(2)
+        , mMaxConnections(5)
         , mConnectionCount(0)
 {
         mListenerSocket.setBlocking(false);
@@ -38,6 +38,7 @@ void GameServer::run()
                         accumulator -= mUpdateInterval;
                         ++mTickCounter;
 
+                        handlePackets();
                         handleConnections();
                         handleDisconnections();
 
@@ -55,6 +56,24 @@ void GameServer::tick(sf::Time dt)
 {
 }
 
+void GameServer::handlePackets()
+{
+        for (RemotePeer::Ptr& peer : mPeers)
+        {
+                sf::Packet packet;
+
+                while (peer->socket.receive(packet) == sf::Socket::Done)
+                {
+                        // Interpret packet and react to it
+                        handlePacket(packet, *peer);
+
+                        // TODO: update ping timer of peer
+
+                        packet.clear();
+                }
+        }
+}
+
 void GameServer::handleConnections()
 {
         if (!mIsListening)
@@ -64,7 +83,10 @@ void GameServer::handleConnections()
 
         if (mListenerSocket.accept(newPeer->socket) == sf::TcpListener::Done)
         {
-                std::cout << "New connection" << std::endl;
+                std::cout << "New connection (";
+                std::cout << newPeer->socket.getRemoteAddress();
+                std::cout << ":" << newPeer->socket.getRemotePort() << ")";
+                std::cout << std::endl;
 
                 mPeers.push_back(std::move(newPeer));
                 mPeers.back()->connected = true;
@@ -84,6 +106,8 @@ void GameServer::handleDisconnections()
                 {
                         std::cout << "Connection lost" << std::endl;
 
+                        (*itr)->socket.disconnect();
+
                         itr = mPeers.erase(itr);
                         --mConnectionCount;
 
@@ -97,13 +121,28 @@ void GameServer::handleDisconnections()
         }
 }
 
+void GameServer::handlePacket(sf::Packet& packet, RemotePeer& peer)
+{
+        sf::Int32 typeData;
+        packet >> typeData;
+
+        Client::Packets packetType = static_cast<Client::Packets>(typeData);
+
+        switch (packetType)
+        {
+                case Client::Packets::Disconnect:
+                        peer.connected = false;
+                        break;
+        }
+}
+
 void GameServer::setListening(bool enable)
 {
         if (enable && !mIsListening)
         {
                 mIsListening = (mListenerSocket.listen(mPort) == sf::TcpListener::Done);
         }
-        else
+        else if (!enable && mIsListening)
         {
                 mListenerSocket.close();
                 mIsListening = false;
