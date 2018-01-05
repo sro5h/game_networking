@@ -6,13 +6,19 @@
 namespace Server
 {
 const unsigned short Port = 4242;
+
+enum class Packets : sf::Int32
+{
+        ConnectedSelf,
+        Connected,
+};
 }
 
 namespace Client
 {
 enum class Packets : sf::Int32
 {
-        Disconnect,
+        Disconnect,     // format: [Int32:packetType]
 };
 }
 

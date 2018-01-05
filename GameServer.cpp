@@ -16,6 +16,7 @@ GameServer::GameServer()
         : mUpdateInterval(sf::milliseconds(100))
         , mPort(Server::Port)
         , mTickCounter(0)
+        , mIdCounter(0)
         , mIsRunning(true)
         , mMaxConnections(5)
         , mConnectionCount(0)
@@ -90,8 +91,12 @@ void GameServer::handleConnections()
 
                 mPeers.push_back(std::move(newPeer));
                 mPeers.back()->connected = true;
+                mPeers.back()->id = mIdCounter;
+
+                notifyConnection(*mPeers.back());
 
                 ++mConnectionCount;
+                ++mIdCounter;
 
                 if (mConnectionCount >= mMaxConnections)
                         setListening(false);
@@ -133,6 +138,40 @@ void GameServer::handlePacket(sf::Packet& packet, RemotePeer& peer)
                 case Client::Packets::Disconnect:
                         peer.connected = false;
                         break;
+        }
+}
+
+void GameServer::notifyConnection(RemotePeer& newPeer)
+{
+        // Notify the peer itself
+        sf::Packet selfPacket;
+        selfPacket << static_cast<sf::Int32>(Server::Packets::ConnectedSelf);
+        selfPacket << newPeer.id;
+        newPeer.socket.send(selfPacket);
+
+        // Notify other peers
+        sf::Packet othersPacket;
+        othersPacket << static_cast<sf::Int32>(Server::Packets::Connected);
+        othersPacket << newPeer.id;
+        broadcastExcept(newPeer.id, othersPacket);
+}
+
+void GameServer::broadcast(sf::Packet& packet)
+{
+        for (RemotePeer::Ptr& peer : mPeers)
+        {
+                peer->socket.send(packet);
+        }
+}
+
+void GameServer::broadcastExcept(sf::Int32 peerId, sf::Packet& packet)
+{
+        for (RemotePeer::Ptr& peer : mPeers)
+        {
+                if (peer->id != peerId)
+                {
+                        peer->socket.send(packet);
+                }
         }
 }
 
