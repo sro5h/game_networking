@@ -8,12 +8,14 @@
 
 GameServer::RemotePeer::RemotePeer()
         : connected(false)
+        , lastPacketTick(0)
 {
         socket.setBlocking(false);
 }
 
 GameServer::GameServer()
         : mUpdateInterval(sf::milliseconds(100))
+        , mTimeoutTicks(20)
         , mPort(Server::Port)
         , mTickCounter(0)
         , mIdCounter(0)
@@ -68,9 +70,14 @@ void GameServer::handlePackets()
                         // Interpret packet and react to it
                         handlePacket(packet, *peer);
 
-                        // TODO: update ping timer of peer
-
+                        peer->lastPacketTick = now();
                         packet.clear();
+                }
+
+                // Check if peer timed out
+                if (now() >= peer->lastPacketTick + mTimeoutTicks)
+                {
+                        peer->connected = false;
                 }
         }
 }
@@ -92,6 +99,8 @@ void GameServer::handleConnections()
                 mPeers.push_back(std::move(newPeer));
                 mPeers.back()->connected = true;
                 mPeers.back()->id = mIdCounter;
+                // prevent initial timeout
+                mPeers.back()->lastPacketTick = now();
 
                 notifyConnection(*mPeers.back());
 

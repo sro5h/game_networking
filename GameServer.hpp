@@ -22,6 +22,7 @@ private:
                 sf::TcpSocket socket;
                 bool connected;
                 sf::Int32 id;
+                sf::Int32 lastPacketTick;
 
                 typedef std::unique_ptr<RemotePeer> Ptr;
         };
@@ -46,6 +47,7 @@ private:
 
 private:
         const sf::Time mUpdateInterval;
+        const sf::Int32 mTimeoutTicks;
         const unsigned short mPort;
 
         sf::Int32 mTickCounter;
