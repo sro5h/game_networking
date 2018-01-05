@@ -10,6 +10,7 @@ public:
         ~GameClient();
 
         void run();
+        void close();
 
 private:
         void update(sf::Time dt);

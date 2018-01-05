@@ -37,6 +37,7 @@ private:
 
         void handlePacket(sf::Packet& packet, RemotePeer& peer);
         void notifyConnection(RemotePeer& newPeer);
+        void notifyDisconnection(RemotePeer& oldPeer);
 
         void broadcast(sf::Packet& packet);
         void broadcastExcept(sf::Int32 peerId, sf::Packet& packet);

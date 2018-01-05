@@ -118,7 +118,9 @@ void GameServer::handleDisconnections()
         {
                 if (!(*itr)->connected)
                 {
-                        std::cout << "Connection lost" << std::endl;
+                        std::cout << "Disconnection" << std::endl;
+
+                        notifyDisconnection(**itr);
 
                         (*itr)->socket.disconnect();
 
@@ -163,6 +165,21 @@ void GameServer::notifyConnection(RemotePeer& newPeer)
         othersPacket << static_cast<sf::Int32>(Server::Packets::Connected);
         othersPacket << newPeer.id;
         broadcastExcept(newPeer.id, othersPacket);
+}
+
+void GameServer::notifyDisconnection(RemotePeer& oldPeer)
+{
+        // Notify the peer itself
+        sf::Packet selfPacket;
+        selfPacket << static_cast<sf::Int32>(Server::Packets::DisconnectedSelf);
+        selfPacket << oldPeer.id;
+        oldPeer.socket.send(selfPacket);
+
+        // Notify other peers
+        sf::Packet othersPacket;
+        othersPacket << static_cast<sf::Int32>(Server::Packets::Disconnected);
+        othersPacket << oldPeer.id;
+        broadcastExcept(oldPeer.id, othersPacket);
 }
 
 void GameServer::broadcast(sf::Packet& packet)

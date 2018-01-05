@@ -101,5 +101,23 @@ void GameClient::handlePacket(sf::Packet& packet)
                         packet >> id;
                         std::cout << "New connection id = " << id << std::endl;
                 } break;
+
+                case Server::Packets::DisconnectedSelf:
+                {
+                        std::cout << "Disconnected" << std::endl;
+                        close();
+                } break;
+
+                case Server::Packets::Disconnected:
+                {
+                        sf::Int32 id;
+                        packet >> id;
+                        std::cout << "Disconnection id = " << id << std::endl;
+                } break;
         }
+}
+
+void GameClient::close()
+{
+        mIsRunning = false;
 }

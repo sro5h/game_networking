@@ -11,6 +11,8 @@ enum class Packets : sf::Int32
 {
         ConnectedSelf,
         Connected,
+        DisconnectedSelf,
+        Disconnected,
 };
 }
 
