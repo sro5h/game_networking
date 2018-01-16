@@ -14,7 +14,7 @@ Host::~Host()
         destroy();
 }
 
-bool Host::create(const std::string& address, Uint16 port, std::size_t maxPeers)
+bool Host::create(const std::string& address, Uint16 port, std::size_t connections)
 {
         assert(mHost == nullptr);
 
@@ -33,7 +33,7 @@ bool Host::create(const std::string& address, Uint16 port, std::size_t maxPeers)
         }
         enetAddress.port = port;
 
-        mHost = enet_host_create(&enetAddress, maxPeers, 2, 0, 0);
+        mHost = enet_host_create(&enetAddress, connections, 2, 0, 0);
 
         return mHost != nullptr;
 }
@@ -52,7 +52,31 @@ void Host::destroy()
         }
 }
 
-void Host::disconnect(const RemotePeer& peer)
+bool Host::connect(const std::string& address, Uint16 port)
+{
+        assert(mHost);
+
+        ENetAddress enetAddress;
+        if (address.empty())
+        {
+                enetAddress.host = ENET_HOST_ANY;
+        }
+        else
+        {
+                if (enet_address_set_host(&enetAddress, address.c_str()) != 0)
+                {
+                        // Address could not be set
+                        return false;
+                }
+        }
+        enetAddress.port = port;
+
+        ENetPeer* peer = enet_host_connect(mHost, &enetAddress, 2, 0);
+
+        return peer != nullptr;
+}
+
+void Host::disconnect(const Peer& peer)
 {
         assert(mHost);
 
@@ -85,7 +109,7 @@ bool Host::pollEvent(Event& event) const
         return false;
 }
 
-std::size_t Host::getConnectedPeerCount() const
+std::size_t Host::getConnectionCount() const
 {
         return (mHost) ? mHost->connectedPeers : 0;
 }
@@ -99,7 +123,7 @@ void Host::broadcast(const Packet& packet)
         enet_host_broadcast(mHost, 0, enetPacket);
 }
 
-void Host::broadcastExcept(const RemotePeer& peer, const Packet& packet)
+void Host::broadcastExcept(const Peer& peer, const Packet& packet)
 {
         assert(mHost);
 
@@ -122,7 +146,7 @@ void Host::broadcastExcept(const RemotePeer& peer, const Packet& packet)
         }
 }
 
-void Host::send(const RemotePeer& peer, const Packet& packet)
+void Host::send(const Peer& peer, const Packet& packet)
 {
         assert(mHost);
 

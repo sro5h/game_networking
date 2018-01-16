@@ -1,25 +1,28 @@
-#ifndef _PEER_HPP_
-#define _PEER_HPP_
+#ifndef PEER_HPP
+#define PEER_HPP
 
-#include "Event.hpp"
+#include "Types.hpp"
 
-class Peer final
+#include <string>
+
+struct Peer final
 {
 public:
         explicit Peer();
-        ~Peer();
 
-        bool create();
-        void destroy();
-        bool connect(const std::string& ip, Uint16 port);
-        void disconnect();
-        bool pollEvent(Event& event) const;
+public:
+        bool operator==(const Peer& other) const;
 
-        void send(const Packet& packet);
+public:
+        std::string address;
+        Uint16 port;
+        Uint16 id;
 
 private:
-        ENetHost* mHost;
-        ENetPeer* mRemoteHost;
+        ENetPeer* peer;
+
+        friend class Host;
+        friend void convertPeer(Peer&, const ENetPeer&);
 };
 
-#endif // _PEER_HPP_
+#endif // PEER_HPP

@@ -1,5 +1,5 @@
-#ifndef _PACKET_HPP_
-#define _PACKET_HPP_
+#ifndef PACKET_HPP
+#define PACKET_HPP
 
 #include "Types.hpp"
 
@@ -72,4 +72,4 @@ private:
 
 ENetPacket* toENetPacket(const Packet& packet);
 
-#endif // _PACKET_HPP_
+#endif // PACKET_HPP

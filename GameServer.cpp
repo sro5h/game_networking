@@ -41,16 +41,16 @@ void GameServer::handleEvent(Event& event)
         }
 }
 
-void GameServer::handleReceive(Packet& packet, RemotePeer& peer)
+void GameServer::handleReceive(Packet& packet, Peer& peer)
 {
 }
 
-void GameServer::handleConnect(RemotePeer& peer)
+void GameServer::handleConnect(Peer& peer)
 {
         mPeers.push_back(peer);
 }
 
-void GameServer::handleDisconnect(RemotePeer& peer)
+void GameServer::handleDisconnect(Peer& peer)
 {
         auto it = std::find(mPeers.begin(), mPeers.end(), peer);
 

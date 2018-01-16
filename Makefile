@@ -4,10 +4,9 @@ CXXFLAGS = -I. -Wall -Wextra -std=c++14
 LDFLAGS = -lenet -lsfml-system
 
 PROJECT = app
-PROJECT_HEADERS = Event.hpp Packet.hpp Host.hpp Peer.hpp RemotePeer.hpp\
-                  GameServer.hpp
+PROJECT_HEADERS = Event.hpp Packet.hpp Host.hpp Peer.hpp GameServer.hpp
 PROJECT_SOURCES = main.cpp Event.cpp Packet.cpp Host.cpp Peer.cpp\
-                  RemotePeer.cpp GameServer.cpp
+                  GameServer.cpp
 PROJECT_OBJECTS = $(subst .cpp,.o,$(PROJECT_SOURCES))
 
 all: $(PROJECT)

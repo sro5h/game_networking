@@ -2,6 +2,7 @@
 #define GAME_SERVER_HPP
 
 #include "Host.hpp"
+#include "Peer.hpp"
 
 #include <SFML/System/Time.hpp>
 
@@ -16,9 +17,9 @@ public:
 
 private:
         void handleEvent(Event& event);
-        void handleReceive(Packet& packet, RemotePeer& peer);
-        void handleConnect(RemotePeer& peer);
-        void handleDisconnect(RemotePeer& peer);
+        void handleReceive(Packet& packet, Peer& peer);
+        void handleConnect(Peer& peer);
+        void handleDisconnect(Peer& peer);
 
         void incrementTickClock();
         Uint32 now() const;
@@ -27,7 +28,7 @@ private:
         Uint32 mTickClock;
 
         Host mHost;
-        std::vector<RemotePeer> mPeers;
+        std::vector<Peer> mPeers;
 };
 
 #endif // GAME_SERVER_HPP
