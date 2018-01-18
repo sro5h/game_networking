@@ -1,4 +1,5 @@
 #include "GameServer.hpp"
+#include "GameClient.hpp"
 
 #include <SFML/System/Clock.hpp>
 #include <enet/enet.h>
@@ -32,6 +33,7 @@ int main(int argc, char* argv[])
         }
         else
         {
+                runGameClient();
         }
 
         return 0;
@@ -54,6 +56,29 @@ void runGameServer()
                         accumulator -= interval;
 
                         server.update(interval);
+                }
+        }
+}
+
+void runGameClient()
+{
+        GameClient client;
+        sf::Clock clock;
+        sf::Time accumulator = sf::Time::Zero;
+
+        std::cout << "Client started." << std::endl;
+
+        client.connect("localhost", 4243);
+
+        while (true)
+        {
+                accumulator += clock.restart();
+
+                while (accumulator >= interval)
+                {
+                        accumulator -= interval;
+
+                        client.update(interval);
                 }
         }
 }
