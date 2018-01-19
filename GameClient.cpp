@@ -1,6 +1,7 @@
 #include "GameClient.hpp"
 
-#include <iostream>
+#include "Common.hpp"
+
 #include <cassert>
 
 GameClient::GameClient()
@@ -27,6 +28,8 @@ void GameClient::connect(const std::string& address, const Uint16 port)
 
 void GameClient::handleEvent(Event& event)
 {
+        logEvent(event);
+
         switch (event.type)
         {
                 case Event::Type::Receive:
@@ -48,19 +51,16 @@ void GameClient::handleEvent(Event& event)
 
 void GameClient::handleReceive(Packet& packet, const Peer& peer)
 {
-        std::cout << "Receive" << std::endl;
 }
 
 void GameClient::handleConnect(const Peer& peer)
 {
         mPeer = peer;
-        std::cout << "Connect" << std::endl;
 }
 
 void GameClient::handleDisconnect(const Peer& peer)
 {
         assert(peer.id == mPeer.id);
-        std::cout << "Disconnect" << std::endl;
 }
 
 void GameClient::incrementTickClock()

@@ -1,5 +1,7 @@
 #include "GameServer.hpp"
 
+#include "Common.hpp"
+
 #include <algorithm>
 #include <cassert>
 
@@ -22,6 +24,8 @@ void GameServer::update(const sf::Time time)
 
 void GameServer::handleEvent(Event& event)
 {
+        logEvent(event);
+
         switch (event.type)
         {
                 case Event::Type::Receive:
