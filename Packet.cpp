@@ -11,10 +11,6 @@ Packet::Packet(Flag flag)
 {
 }
 
-Packet::~Packet()
-{
-}
-
 void Packet::append(const void* data, std::size_t size)
 {
         if (data && (size > 0))

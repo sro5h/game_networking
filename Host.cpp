@@ -126,6 +126,7 @@ void Host::broadcast(const Packet& packet)
 void Host::broadcastExcept(const Peer& peer, const Packet& packet)
 {
         assert(mHost);
+        assert(peer.peer);
 
         ENetPacket* enetPacket = toENetPacket(packet);
 
@@ -149,6 +150,7 @@ void Host::broadcastExcept(const Peer& peer, const Packet& packet)
 void Host::send(const Peer& peer, const Packet& packet)
 {
         assert(mHost);
+        assert(peer.peer);
 
         ENetPacket* enetPacket = toENetPacket(packet);
 

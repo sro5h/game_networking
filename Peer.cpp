@@ -9,5 +9,15 @@ Peer::Peer()
 
 bool Peer::operator==(const Peer& other) const
 {
-        return other.id == this->id;
+        if (peer != nullptr && other.peer != nullptr)
+        {
+                return other.id == id;
+        }
+
+        return false;
+}
+
+Peer::operator bool() const
+{
+        return peer != nullptr;
 }

@@ -17,12 +17,14 @@ void toEvent(Event& event, const ENetEvent& enetEvent)
                 {
                         event.type = Event::Type::Connect;
                         convertPeer(event.peer, *enetEvent.peer);
+                        event.peer.peer = enetEvent.peer;
                 } break;
 
                 case ENET_EVENT_TYPE_DISCONNECT:
                 {
                         event.type = Event::Type::Disconnect;
                         convertPeer(event.peer, *enetEvent.peer);
+                        event.peer.peer = enetEvent.peer;
                 } break;
 
                 case ENET_EVENT_TYPE_RECEIVE:
@@ -31,6 +33,7 @@ void toEvent(Event& event, const ENetEvent& enetEvent)
                         event.packet.append((void*)enetEvent.packet->data,
                                         enetEvent.packet->dataLength);
                         convertPeer(event.peer, *enetEvent.peer);
+                        event.peer.peer = enetEvent.peer;
 
                         enet_packet_destroy(enetEvent.packet);
                 } break;
