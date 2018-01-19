@@ -2,10 +2,13 @@
 
 #include "Common.hpp"
 
+#include <SFML/Window/Event.hpp>
+
 #include <cassert>
 
-GameClient::GameClient()
+GameClient::GameClient(sf::RenderWindow& window)
         : mTickClock(0)
+        , mWindow(window)
 {
         mHost.create("localhost", 5354, 1);
 }
@@ -14,10 +17,16 @@ void GameClient::update(const sf::Time time)
 {
         incrementTickClock();
 
-        Event event;
-        while (mHost.pollEvent(event))
+        sf::Event windowEvent;
+        while (mWindow.pollEvent(windowEvent))
         {
-                handleEvent(event);
+                handleWindowEvent(windowEvent);
+        }
+
+        Event netEvent;
+        while (mHost.pollEvent(netEvent))
+        {
+                handleNetworkEvent(netEvent);
         }
 }
 
@@ -26,7 +35,21 @@ void GameClient::connect(const std::string& address, const Uint16 port)
         mHost.connect(address, port);
 }
 
-void GameClient::handleEvent(Event& event)
+void GameClient::handleWindowEvent(const sf::Event& event)
+{
+        switch (event.type)
+        {
+                case sf::Event::Closed:
+                {
+                        mWindow.close();
+                } break;
+
+                default:
+                        break;
+        }
+}
+
+void GameClient::handleNetworkEvent(Event& event)
 {
         logEvent(event);
 

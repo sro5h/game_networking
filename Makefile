@@ -1,7 +1,7 @@
 CXX = g++
 RM = rm
 CXXFLAGS = -I. -Wall -Wextra -std=c++14
-LDFLAGS = -lenet -lsfml-system
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lenet
 
 PROJECT = app
 PROJECT_HEADERS = Event.hpp Packet.hpp Host.hpp Peer.hpp GameServer.hpp\

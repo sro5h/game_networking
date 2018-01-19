@@ -62,7 +62,9 @@ void runGameServer()
 
 void runGameClient()
 {
-        GameClient client;
+        sf::RenderWindow window(sf::VideoMode(400, 400), "App");
+        GameClient client(window);
+
         sf::Clock clock;
         sf::Time accumulator = sf::Time::Zero;
 
@@ -70,7 +72,7 @@ void runGameClient()
 
         client.connect("localhost", 4243);
 
-        while (true)
+        while (window.isOpen())
         {
                 accumulator += clock.restart();
 
@@ -80,5 +82,8 @@ void runGameClient()
 
                         client.update(interval);
                 }
+
+                window.clear();
+                window.display();
         }
 }
