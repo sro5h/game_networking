@@ -31,6 +31,8 @@ private:
         void handleDisconnect(Peer& peer);
 
         void updatePlayers();
+        sv::StatePacket collectState();
+        void sendState(const sv::StatePacket& state);
 
         void incrementTickClock();
         Uint32 now() const;

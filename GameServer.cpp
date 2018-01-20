@@ -25,6 +25,9 @@ void GameServer::update(const sf::Time time)
         }
 
         updatePlayers();
+
+        auto state = collectState();
+        sendState(state);
 }
 
 void GameServer::handleEvent(Event& event)
@@ -109,6 +112,31 @@ void GameServer::updatePlayers()
                         p.position.x += playerSpeed;
                 }
         }
+}
+
+sv::StatePacket GameServer::collectState()
+{
+        sv::StatePacket state;
+
+        for (auto& entry : mPlayers)
+        {
+                sv::PlayerState p;
+                p.id = entry.first;
+                p.position = entry.second.position;
+
+                state.states.push_back(p);
+        }
+
+        return state;
+}
+
+void GameServer::sendState(const sv::StatePacket& state)
+{
+        Packet packet;
+        packet << sv::PacketType::State;
+        packet << state;
+
+        mHost.broadcast(packet);
 }
 
 void GameServer::incrementTickClock()
