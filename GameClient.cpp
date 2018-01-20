@@ -131,7 +131,7 @@ cl::ActionPacket GameClient::collectActions() const
 void GameClient::sendActions(const cl::ActionPacket& actions)
 {
         Packet packet;
-        packet << toIntegral(cl::PacketType::Action);
+        packet << cl::PacketType::Action;
         packet << actions;
 
         mHost.send(mPeer, packet);

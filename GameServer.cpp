@@ -3,6 +3,7 @@
 #include "Common.hpp"
 
 #include <algorithm>
+#include <iostream>
 #include <cassert>
 
 GameServer::GameServer()
@@ -47,17 +48,33 @@ void GameServer::handleEvent(Event& event)
 
 void GameServer::handleReceive(Packet& packet, Peer& peer)
 {
+        cl::PacketType type;
+        packet >> type;
+
+        switch (type)
+        {
+                case cl::PacketType::Action:
+                {
+                        cl::ActionPacket actions;
+                        packet >> actions;
+                        mPlayers[peer.id].actions = actions;
+                        std::cout << "ActionPacket" << std::endl;
+                } break;
+        }
 }
 
 void GameServer::handleConnect(Peer& peer)
 {
         mPeers.push_back(peer);
+        mPlayers[peer.id] = Player();
 }
 
 void GameServer::handleDisconnect(Peer& peer)
 {
-        auto it = std::find(mPeers.begin(), mPeers.end(), peer);
+        int rc = mPlayers.erase(peer.id);
+        assert(rc != 0);
 
+        auto it = std::find(mPeers.begin(), mPeers.end(), peer);
         assert(it != mPeers.end());
 
         if (it != mPeers.end())

@@ -11,6 +11,9 @@ enum class PacketType : Uint8
         Action,
 };
 
+Packet& operator<<(Packet&, const PacketType&);
+Packet& operator>>(Packet&, PacketType&);
+
 struct ActionPacket
 {
         bool MoveUp;
@@ -19,8 +22,8 @@ struct ActionPacket
         bool MoveRight;
 };
 
-Packet& operator<<(Packet& p, const ActionPacket& a);
-Packet& operator>>(Packet& p, ActionPacket& a);
+Packet& operator<<(Packet&, const ActionPacket&);
+Packet& operator>>(Packet&, ActionPacket&);
 
 }
 

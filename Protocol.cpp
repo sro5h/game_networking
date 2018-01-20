@@ -3,6 +3,22 @@
 namespace cl
 {
 
+Packet& operator<<(Packet& p, const PacketType& pt)
+{
+        return p << static_cast<Uint8>(pt);
+}
+
+Packet& operator>>(Packet& p, PacketType& pt)
+{
+        Uint8 data;
+        if (p >> data)
+        {
+                pt = static_cast<PacketType>(data);
+        }
+
+        return p;
+}
+
 Packet& operator<<(Packet& p, const ActionPacket& a)
 {
         Uint16 actions = 0;

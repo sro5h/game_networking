@@ -1,12 +1,19 @@
 #ifndef GAME_SERVER_HPP
 #define GAME_SERVER_HPP
 
+#include "Protocol.hpp"
 #include "Host.hpp"
 #include "Peer.hpp"
 
 #include <SFML/System/Time.hpp>
 
+#include <map>
 #include <vector>
+
+struct Player final
+{
+        cl::ActionPacket actions;
+};
 
 class GameServer final
 {
@@ -29,6 +36,7 @@ private:
 
         Host mHost;
         std::vector<Peer> mPeers;
+        std::map<Uint16, Player> mPlayers;
 };
 
 #endif // GAME_SERVER_HPP
