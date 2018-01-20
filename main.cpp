@@ -72,6 +72,8 @@ void runGameClient()
 
         client.connect("localhost", 4243);
 
+        client.waitForConnection();
+
         while (window.isOpen())
         {
                 accumulator += clock.restart();

@@ -1,6 +1,7 @@
 #ifndef GAME_CLIENT_HPP
 #define GAME_CLIENT_HPP
 
+#include "Protocol.hpp"
 #include "Host.hpp"
 #include "Peer.hpp"
 
@@ -14,14 +15,18 @@ public:
 
         void update(const sf::Time time);
         void connect(const std::string& address, const Uint16 port);
+        void waitForConnection();
 
 private:
-        void handleWindowEvent(const sf::Event& event);
-        void handleNetworkEvent(Event& event);
+        void handleWindowEvents();
+        void handleNetworkEvents();
 
         void handleReceive(Packet& packet, const Peer& peer);
         void handleConnect(const Peer& peer);
         void handleDisconnect(const Peer& peer);
+
+        cl::ActionPacket collectActions() const;
+        void sendActions(const cl::ActionPacket& actions);
 
         void incrementTickClock();
         Uint32 now() const;

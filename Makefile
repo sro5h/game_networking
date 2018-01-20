@@ -5,9 +5,9 @@ LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lenet
 
 PROJECT = app
 PROJECT_HEADERS = Event.hpp Packet.hpp Host.hpp Peer.hpp GameServer.hpp\
-                  GameClient.hpp Common.hpp
+                  GameClient.hpp Common.hpp Protocol.hpp
 PROJECT_SOURCES = main.cpp Event.cpp Packet.cpp Host.cpp Peer.cpp\
-                  GameServer.cpp GameClient.cpp Common.cpp
+                  GameServer.cpp GameClient.cpp Common.cpp Protocol.cpp
 PROJECT_OBJECTS = $(subst .cpp,.o,$(PROJECT_SOURCES))
 
 all: $(PROJECT)

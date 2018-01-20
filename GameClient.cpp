@@ -17,17 +17,11 @@ void GameClient::update(const sf::Time time)
 {
         incrementTickClock();
 
-        sf::Event windowEvent;
-        while (mWindow.pollEvent(windowEvent))
-        {
-                handleWindowEvent(windowEvent);
-        }
+        auto actions = collectActions();
+        sendActions(actions);
 
-        Event netEvent;
-        while (mHost.pollEvent(netEvent))
-        {
-                handleNetworkEvent(netEvent);
-        }
+        handleWindowEvents();
+        handleNetworkEvents();
 }
 
 void GameClient::connect(const std::string& address, const Uint16 port)
@@ -35,40 +29,65 @@ void GameClient::connect(const std::string& address, const Uint16 port)
         mHost.connect(address, port);
 }
 
-void GameClient::handleWindowEvent(const sf::Event& event)
+void GameClient::waitForConnection()
 {
-        switch (event.type)
+        while (!mPeer)
         {
-                case sf::Event::Closed:
-                {
-                        mWindow.close();
-                } break;
+                handleWindowEvents();
 
-                default:
-                        break;
+                Event event;
+                while (mHost.pollEvent(event))
+                {
+                        if (event.type == Event::Type::Connect)
+                        {
+                                mPeer = event.peer;
+                        }
+                }
         }
 }
 
-void GameClient::handleNetworkEvent(Event& event)
+void GameClient::handleWindowEvents()
 {
-        logEvent(event);
-
-        switch (event.type)
+        sf::Event event;
+        while (mWindow.pollEvent(event))
         {
-                case Event::Type::Receive:
+                switch (event.type)
                 {
-                        handleReceive(event.packet, event.peer);
-                } break;
+                        case sf::Event::Closed:
+                        {
+                                mWindow.close();
+                        } break;
 
-                case Event::Type::Connect:
-                {
-                        handleConnect(event.peer);
-                } break;
+                        default:
+                                break;
+                }
+        }
+}
 
-                case Event::Type::Disconnect:
+void GameClient::handleNetworkEvents()
+{
+        Event event;
+        while (mHost.pollEvent(event))
+        {
+                logEvent(event);
+
+                switch (event.type)
                 {
-                        handleDisconnect(event.peer);
-                } break;
+                        case Event::Type::Receive:
+                        {
+                                handleReceive(event.packet, event.peer);
+                        } break;
+
+                        case Event::Type::Connect:
+                        {
+                                handleConnect(event.peer);
+                        } break;
+
+                        case Event::Type::Disconnect:
+                        {
+                                handleDisconnect(event.peer);
+                        } break;
+                }
         }
 }
 
@@ -84,6 +103,38 @@ void GameClient::handleConnect(const Peer& peer)
 void GameClient::handleDisconnect(const Peer& peer)
 {
         assert(peer.id == mPeer.id);
+}
+
+cl::ActionPacket GameClient::collectActions() const
+{
+        cl::ActionPacket actions;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        {
+                actions.MoveUp = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        {
+                actions.MoveDown = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
+                actions.MoveLeft = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+                actions.MoveRight = true;
+        }
+
+        return actions;
+}
+
+void GameClient::sendActions(const cl::ActionPacket& actions)
+{
+        Packet packet;
+        packet << toIntegral(cl::PacketType::Action);
+        packet << actions;
+
+        mHost.send(mPeer, packet);
 }
 
 void GameClient::incrementTickClock()
