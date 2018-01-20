@@ -6,6 +6,7 @@
 #include "Peer.hpp"
 
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
 
 #include <map>
 #include <vector>
@@ -13,6 +14,7 @@
 struct Player final
 {
         cl::ActionPacket actions;
+        sf::Vector2f position;
 };
 
 class GameServer final
@@ -27,6 +29,8 @@ private:
         void handleReceive(Packet& packet, Peer& peer);
         void handleConnect(Peer& peer);
         void handleDisconnect(Peer& peer);
+
+        void updatePlayers();
 
         void incrementTickClock();
         Uint32 now() const;

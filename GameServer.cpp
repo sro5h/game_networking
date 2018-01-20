@@ -6,6 +6,8 @@
 #include <iostream>
 #include <cassert>
 
+const int playerSpeed = 4;
+
 GameServer::GameServer()
         : mTickClock(0)
 {
@@ -21,6 +23,8 @@ void GameServer::update(const sf::Time time)
         {
                 handleEvent(event);
         }
+
+        updatePlayers();
 }
 
 void GameServer::handleEvent(Event& event)
@@ -80,6 +84,30 @@ void GameServer::handleDisconnect(Peer& peer)
         if (it != mPeers.end())
         {
                 mPeers.erase(it);
+        }
+}
+
+void GameServer::updatePlayers()
+{
+        for (auto& entry : mPlayers)
+        {
+                Player& p = entry.second;
+                if (p.actions.MoveUp)
+                {
+                        p.position.y -= playerSpeed;
+                }
+                if (p.actions.MoveDown)
+                {
+                        p.position.y += playerSpeed;
+                }
+                if (p.actions.MoveLeft)
+                {
+                        p.position.x -= playerSpeed;
+                }
+                if (p.actions.MoveRight)
+                {
+                        p.position.x += playerSpeed;
+                }
         }
 }
 
