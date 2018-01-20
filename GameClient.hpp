@@ -1,7 +1,7 @@
 #ifndef GAME_CLIENT_HPP
 #define GAME_CLIENT_HPP
 
-#include "Protocol.hpp"
+#include "ClientProtocol.hpp"
 #include "Host.hpp"
 #include "Peer.hpp"
 

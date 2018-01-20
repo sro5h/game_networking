@@ -1,5 +1,6 @@
 #include "GameServer.hpp"
 
+#include "ClientProtocol.hpp"
 #include "Common.hpp"
 
 #include <algorithm>
