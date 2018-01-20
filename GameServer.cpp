@@ -74,7 +74,10 @@ void GameServer::handleReceive(Packet& packet, Peer& peer)
 void GameServer::handleConnect(Peer& peer)
 {
         mPeers.push_back(peer);
-        mPlayers[peer.id] = Player();
+
+        Player player;
+        player.position = sf::Vector2f(200, 200);
+        mPlayers[peer.id] = player;
 }
 
 void GameServer::handleDisconnect(Peer& peer)
