@@ -2,9 +2,11 @@
 #define GAME_CLIENT_HPP
 
 #include "ClientProtocol.hpp"
+#include "ServerProtocol.hpp"
 #include "Host.hpp"
 #include "Peer.hpp"
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Time.hpp>
 
@@ -14,6 +16,7 @@ public:
         explicit GameClient(sf::RenderWindow& window);
 
         void update(const sf::Time time);
+        void draw();
         void connect(const std::string& address, const Uint16 port);
         void waitForConnection();
 
@@ -27,6 +30,7 @@ private:
 
         cl::ActionPacket collectActions() const;
         void sendActions(const cl::ActionPacket& actions);
+        void applyState(const sv::StatePacket& state);
 
         void incrementTickClock();
         Uint32 now() const;
@@ -38,6 +42,7 @@ private:
         Peer mPeer;
 
         sf::RenderWindow& mWindow;
+        sf::CircleShape mShape;
 };
 
 #endif // GAME_CLIENT_HPP

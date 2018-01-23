@@ -3,14 +3,17 @@
 #include "Common.hpp"
 
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 
 #include <cassert>
 
 GameClient::GameClient(sf::RenderWindow& window)
         : mTickClock(0)
         , mWindow(window)
+        , mShape(20.0f)
 {
         mHost.create("localhost", 5354, 1);
+        mShape.setOrigin(20.0f, 20.0f);
 }
 
 void GameClient::update(const sf::Time time)
@@ -22,6 +25,11 @@ void GameClient::update(const sf::Time time)
 
         handleWindowEvents();
         handleNetworkEvents();
+}
+
+void GameClient::draw()
+{
+        mWindow.draw(mShape);
 }
 
 void GameClient::connect(const std::string& address, const Uint16 port)
@@ -93,6 +101,19 @@ void GameClient::handleNetworkEvents()
 
 void GameClient::handleReceive(Packet& packet, const Peer& peer)
 {
+        sv::PacketType type;
+        packet >> type;
+
+        switch (type)
+        {
+                case sv::PacketType::State:
+                {
+                        sv::StatePacket state;
+                        packet >> state;
+
+                        applyState(state);
+                } break;
+        }
 }
 
 void GameClient::handleConnect(const Peer& peer)
@@ -103,6 +124,11 @@ void GameClient::handleConnect(const Peer& peer)
 void GameClient::handleDisconnect(const Peer& peer)
 {
         assert(peer.id == mPeer.id);
+}
+
+void GameClient::applyState(const sv::StatePacket& state)
+{
+        mShape.setPosition(state.states[0].position);
 }
 
 cl::ActionPacket GameClient::collectActions() const

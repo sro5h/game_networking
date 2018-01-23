@@ -86,6 +86,7 @@ void runGameClient()
                 }
 
                 window.clear();
+                client.draw();
                 window.display();
         }
 }
