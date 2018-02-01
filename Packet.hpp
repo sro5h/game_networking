@@ -2,7 +2,6 @@
 #define PACKET_HPP
 
 #include "Types.hpp"
-
 #include <string>
 #include <vector>
 

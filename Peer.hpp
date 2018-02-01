@@ -2,8 +2,21 @@
 #define PEER_HPP
 
 #include "Types.hpp"
-
 #include <string>
+
+enum class State
+{
+        Zombie,
+        Disconnected,
+        Disconnecting,
+        AcknowlegdingDisconnect,
+        DisconnectLater,
+        Connected,
+        Connecting,
+        AcknowledgingConnect,
+        PendingConnect,
+        Succeeded,
+};
 
 /**
  * Represents a connection with a Host.
@@ -15,6 +28,8 @@ public:
          * Initializes the Peer to an invalid state.
          */
         explicit Peer();
+
+        State getState();
 
 public:
         /**
@@ -35,6 +50,7 @@ public:
         std::string address;
         Uint16 port;
         Uint16 id;
+        Uint16 outgoingId;
 
 private:
         ENetPeer* peer;

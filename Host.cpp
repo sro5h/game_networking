@@ -1,7 +1,5 @@
 #include "Host.hpp"
-
 #include <enet/enet.h>
-
 #include <cassert>
 
 Host::Host()

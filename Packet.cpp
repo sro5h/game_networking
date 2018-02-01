@@ -1,7 +1,5 @@
 #include "Packet.hpp"
-
 #include <enet/enet.h>
-
 #include <cstring>
 
 Packet::Packet(Flag flag)
